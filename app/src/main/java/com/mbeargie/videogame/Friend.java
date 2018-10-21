@@ -31,11 +31,11 @@ public class Friend {
 
     //creating a rect object
     private Rect detectCollision;
-    private int frameWidth = 300;
-    private int frameHeight = 200;
+    private int frameWidth = 350;
+    private int frameHeight = 250;
 
     // How many frames are there on the sprite sheet?
-    private int frameCount = 30;
+    private int frameCount = 10;
 
     // Start at the first frame - where else?
     private int currentFrame = 0;
@@ -97,8 +97,8 @@ public class Friend {
         //Adding the top, left, bottom and right to the rect object
         detectCollision.left = x;
         detectCollision.top = y;
-        detectCollision.right = x + bitmap.getWidth();
-        detectCollision.bottom = y + bitmap.getHeight();
+        detectCollision.right = x + frameWidth;
+        detectCollision.bottom = y + frameHeight;
 
         whereToDraw.left = x;
         whereToDraw.top = y;
