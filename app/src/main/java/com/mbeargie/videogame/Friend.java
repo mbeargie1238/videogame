@@ -31,8 +31,8 @@ public class Friend {
 
     //creating a rect object
     private Rect detectCollision;
-    private int frameWidth = 350;
-    private int frameHeight = 250;
+    private int frameWidth = 345;
+    private int frameHeight = 225;
 
     // How many frames are there on the sprite sheet?
     private int frameCount = 10;
@@ -87,17 +87,17 @@ public class Friend {
     public void update(int playerSpeed) {
         x -= playerSpeed;
         x -= speed;
-        if (x < minX - bitmap.getWidth()) {
+        if (x < minX - frameWidth) {
             Random generator = new Random();
             speed = generator.nextInt(10) + 10;
             x = maxX;
-            y = generator.nextInt(maxY) - bitmap.getHeight();
+            y = generator.nextInt(maxY) - frameHeight;
         }
 
         //Adding the top, left, bottom and right to the rect object
         detectCollision.left = x;
-        detectCollision.top = y;
-        detectCollision.right = x + frameWidth;
+        detectCollision.top = y + 20;
+        detectCollision.right = x + (frameWidth - 20);
         detectCollision.bottom = y + frameHeight;
 
         whereToDraw.left = x;

@@ -7,7 +7,7 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="0dp"
-    android:background="@drawable/splash"
+    android:background="@drawable/home_screen"
     tools:context="com.mbeargie.videogame.MainActivity">
 
     <ImageButton

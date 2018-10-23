@@ -68,20 +68,6 @@ public class Enemy {
     }
 
 
-    public void getRotation(){
-        long time  = System.currentTimeMillis();
-
-        if ( time > lastFrameChangeTime + frameLengthInMilliseconds) {
-            lastFrameChangeTime = time;
-
-            matrix.postRotate(45);
-            bitmap = bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-        }
-
-
-    }
-
 
     public void update(int playerSpeed) {
         //decreasing x coordinate so that enemy will move right to left

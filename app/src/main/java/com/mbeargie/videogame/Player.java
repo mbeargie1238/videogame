@@ -40,7 +40,7 @@ public class Player {
 
     // These next two values can be anything you like
     // As long as the ratio doesn't distort the sprite too much
-    private int frameWidth = 400;
+    private int frameWidth = 336;
     private int frameHeight = 200;
 
     boolean isMoving = false;

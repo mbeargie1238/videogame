@@ -321,17 +321,20 @@ public class GameView extends SurfaceView implements Runnable{
 
 
             //setting the paint color to white to draw the stars
-            paint.setColor(Color.WHITE);
-            paint.setTextSize(20);
+            //paint.setColor(Color.WHITE);
+            //paint.setTextSize(20);
 
 
             drawBackground();
 
+
             //drawing all stars
+            /*
             for (Star s : stars) {
                 paint.setStrokeWidth(s.getStarWidth());
                 canvas.drawPoint(s.getX(), s.getY(), paint);
             }
+            */
 
 
             player.getCurrentFrame();
