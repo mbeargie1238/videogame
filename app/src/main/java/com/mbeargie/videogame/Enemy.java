@@ -78,7 +78,7 @@ public class Enemy {
             //adding the enemy again to the right edge
             Random generator = new Random();
             speed = generator.nextInt(10) + 10;
-            x = maxX;
+            x = maxX + 200;
             y = generator.nextInt(maxY) - bitmap.getHeight();
         }
 

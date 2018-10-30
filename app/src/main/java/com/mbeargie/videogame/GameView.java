@@ -13,6 +13,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -52,6 +53,8 @@ public class GameView extends SurfaceView implements Runnable{
     private Friend friend;
     //defining a boom object to display blast
     private Boom boom;
+    private Yum yum;
+
     //Class constructor
     //a screenX holder
     int screenX;
@@ -65,6 +68,8 @@ public class GameView extends SurfaceView implements Runnable{
     private boolean isGameOver ;
     //the score holder
     int score;
+    int count;
+
     //the high Scores Holder
     int highScore[] = new int[4];
     //Shared Prefernces to store the High Scores
@@ -84,6 +89,9 @@ public class GameView extends SurfaceView implements Runnable{
 
     int bitmapXPosition;
     int bitmapYPosition;
+    final Handler handler = new Handler();
+    int yum_timer = 0;
+
 
 
     public GameView(Context context, int screenX, int screenY) {
@@ -100,6 +108,7 @@ public class GameView extends SurfaceView implements Runnable{
 
         //setting the score to 0 initially
         score = 0;
+        count = 0;
 
         sharedPreferences = context.getSharedPreferences("SHAR_PREF_NAME",Context.MODE_PRIVATE);
 
@@ -123,6 +132,8 @@ public class GameView extends SurfaceView implements Runnable{
         enemies = new Enemy(context, screenX, screenY);
 
         boom = new Boom(context);
+        yum = new Yum(context);
+
 
         friend = new Friend(context, screenX, screenY);
 
@@ -207,6 +218,21 @@ public class GameView extends SurfaceView implements Runnable{
                 fps = 1000 / timeThisFrame;
             }
 
+
+            if(yum_timer == 1){
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        enemies.setX(-500);
+                    }
+                }, 150);
+
+                yum_timer = 0;
+
+            }
+
         }
     }
 
@@ -253,6 +279,9 @@ public class GameView extends SurfaceView implements Runnable{
         boom.setX(-500);
         boom.setY(-500);
 
+        yum.setX(-500);
+        yum.setY(-500);
+
         for (Star s : stars) {
             s.update(player.getSpeed());
         }// Update all the background positions
@@ -265,13 +294,15 @@ public class GameView extends SurfaceView implements Runnable{
 
         enemies.update(player.getSpeed());
 
+
         //if collision occurs with player
         if (Rect.intersects(player.getDetectCollision(), enemies.getDetectCollision())) {
+
+            yum_timer = 1;
             //displaying boom at that location
-            boom.setX(enemies.getX());
-            boom.setY(enemies.getY());
+            yum.setX(enemies.getX());
+            yum.setY(enemies.getY());
             //will play a sound at the collision between player and the enemy
-            enemies.setX(-500);
         } else {
             //if the enemy has just entered
             if (flag) {
@@ -395,6 +426,13 @@ public class GameView extends SurfaceView implements Runnable{
                     boom.getBitmap(),
                     boom.getX(),
                     boom.getY(),
+                    paint
+            );
+
+            canvas.drawBitmap(
+                    yum.getBitmap(),
+                    yum.getX(),
+                    yum.getY(),
                     paint
             );
 
