@@ -2,8 +2,11 @@ package com.mbeargie.videogame;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -14,9 +17,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 /**
  * Created by mbeargie on 10/11/2018.
@@ -72,18 +79,17 @@ public class GameView extends SurfaceView implements Runnable{
     long fps =60;
     Matrix matrix = new Matrix();
 
+    Bitmap game_over;
+    Bitmap play_again;
+
+    int bitmapXPosition;
+    int bitmapYPosition;
+
 
     public GameView(Context context, int screenX, int screenY) {
         super(context);
 
         this.context = context;
-
-
-
-        // Initialize our array list
-
-        //load the background data into the Background objects and
-        // place them in our GameObject arraylist
 
         backgrounds = new Background(
                 this.context,
@@ -91,7 +97,6 @@ public class GameView extends SurfaceView implements Runnable{
                 screenY,
                 "kitchen",  0, 104, 50);
 
-        // Add more backgrounds here
 
         //setting the score to 0 initially
         score = 0;
@@ -104,27 +109,21 @@ public class GameView extends SurfaceView implements Runnable{
         highScore[2] = sharedPreferences.getInt("score3",0);
         highScore[3] = sharedPreferences.getInt("score4",0);
 
-        //initializing player object
-        //this time also passing screen size to player constructor
         player = new Player(context, screenX, screenY);
 
-        //initializing drawing objects
         surfaceHolder = getHolder();
         paint = new Paint();
 
-        //adding 100 stars you may increase the number
         int starNums = 100;
         for (int i = 0; i < starNums; i++) {
             Star s  = new Star(screenX, screenY);
             stars.add(s);
         }
 
-        //single enemy initialization
         enemies = new Enemy(context, screenX, screenY);
 
-        //initializing boom object
         boom = new Boom(context);
-        //initializing the Friend class object
+
         friend = new Friend(context, screenX, screenY);
 
         this.screenX = screenX;
@@ -133,21 +132,58 @@ public class GameView extends SurfaceView implements Runnable{
 
         isGameOver = false;
 
+        game_over = BitmapFactory.decodeResource(context.getResources(), R.drawable.gameover);
+        play_again = BitmapFactory.decodeResource(context.getResources(), R.drawable.playagain);
+
+
+        game_over = Bitmap.createScaledBitmap(game_over,
+                game_over.getWidth() / 2,
+                game_over.getHeight() / 2,
+                false);
+
+        play_again = Bitmap.createScaledBitmap(play_again,
+                play_again.getWidth() / 3,
+                play_again.getHeight() / 3,
+                false);
+
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_UP:
-                //stopping the boosting when screen is released
-                player.stopBoosting();
-                break;
-            case MotionEvent.ACTION_DOWN:
-                //boosting the space jet when screen is pressed
-                player.setBoosting();
-                break;
+
+        if(isGameOver == false) {
+
+            switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_UP:
+                    //stopping the boosting when screen is released
+                    player.stopBoosting();
+                    break;
+                case MotionEvent.ACTION_DOWN:
+                    //boosting the space jet when screen is pressed
+                    player.setBoosting();
+                    break;
+            }
+        } else {
+
+            float x = motionEvent.getX();
+            float y = motionEvent.getY();
+
+
+            switch(motionEvent.getAction())
+            {
+                case MotionEvent.ACTION_DOWN:
+                    //Check if the x and y position of the touch is inside the bitmap
+                    if( x > bitmapXPosition && x < bitmapXPosition + play_again.getWidth() && y > bitmapYPosition && y < bitmapYPosition + play_again.getHeight() )
+                    {
+                        ((GameActivity)context).finish();
+                        Intent intent = new Intent().setClass(getContext(), GameActivity.class);
+                        (this.context).startActivity(intent);
+                    }
+                    return true;
+            }
+
         }
-        return true;
+            return true;
     }
 
     @Override
@@ -379,12 +415,25 @@ public class GameView extends SurfaceView implements Runnable{
 
             //draw game Over when the game is over
             if(isGameOver){
-                paint.setColor(Color.BLACK);
-                paint.setTextSize(150);
-                paint.setTextAlign(Paint.Align.CENTER);
 
-                int yPos=(int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
-                canvas.drawText("Game Over",canvas.getWidth()/2,yPos,paint);
+                bitmapXPosition = (canvas.getWidth()/2) - (play_again.getWidth() / 2);
+                bitmapYPosition = (canvas.getHeight()/2) - (play_again.getHeight() / 2) + (game_over.getHeight() / 2) + 50;
+
+
+                //drawing boom image
+                canvas.drawBitmap(
+                        game_over,
+                        (canvas.getWidth()/2) - (game_over.getWidth() / 2),
+                        (canvas.getHeight()/2) - (game_over.getHeight() / 2),
+                        paint
+                );
+                canvas.drawBitmap(
+                        play_again,
+                        (canvas.getWidth()/2) - (play_again.getWidth() / 2),
+                        (canvas.getHeight()/2) - (play_again.getHeight() / 2) + (game_over.getHeight() / 2) + 50,
+                        paint
+                );
+
             }
 
             //Unlocking the canvas
