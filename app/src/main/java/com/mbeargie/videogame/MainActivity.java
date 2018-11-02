@@ -16,6 +16,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //high score button
     private ImageButton buttonScore;
 
+    private ImageButton buttonHow;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,11 +33,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //initializing the highscore button
         buttonScore = (ImageButton) findViewById(R.id.buttonScore);
 
+        buttonHow = (ImageButton) findViewById(R.id.buttonHow);
+
+
         //setting the on click listener to high score button
         buttonScore.setOnClickListener(this);
-
         //adding a click listener
         buttonPlay.setOnClickListener(this);
+
+        buttonHow.setOnClickListener(this);
+
     }
 
     @Override
@@ -48,6 +56,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             //the transition from MainActivity to HighScore activity
             startActivity(new Intent(MainActivity.this, HighScore.class));
+        }
+
+        if (v == buttonHow) {
+
+            //the transition from MainActivity to HighScore activity
+            startActivity(new Intent(MainActivity.this, HowToPlay.class));
         }
     }
 }

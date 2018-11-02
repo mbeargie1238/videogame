@@ -9,8 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:versionCode="1"
-        android:versionName="lucky1">
+        android:versionCode="3"
+        android:versionName="lucky3">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +21,11 @@
         <activity android:name=".GameActivity"
             android:screenOrientation="landscape">
         </activity>
-        <activity android:name=".HighScore">
+        <activity android:name=".HighScore"
+            android:screenOrientation="landscape">
+        </activity>
+        <activity android:name=".HowToPlay"
+            android:screenOrientation="landscape">
         </activity>
     </application>
 

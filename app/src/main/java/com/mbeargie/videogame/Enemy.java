@@ -35,6 +35,7 @@ public class Enemy {
 
     private int maxY;
     private int minY;
+    private int inbounds;
 
     //creating a rect object
     private Rect detectCollision;
@@ -55,6 +56,8 @@ public class Enemy {
         maxY = screenY;
         minX = 0;
         minY = 0;
+        inbounds = maxY + 200;
+
 
         //generating a random coordinate to add enemy
         Random generator = new Random();
@@ -75,11 +78,13 @@ public class Enemy {
         x -= speed;
         //if the enemy reaches the left edge
         if (x < minX - bitmap.getWidth()) {
+
+
             //adding the enemy again to the right edge
             Random generator = new Random();
             speed = generator.nextInt(10) + 10;
-            x = maxX + 200;
-            y = generator.nextInt(maxY) - bitmap.getHeight();
+            x = maxX;
+            y = generator.nextInt(inbounds) - bitmap.getHeight();
         }
 
         //Adding the top, left, bottom and right to the rect object

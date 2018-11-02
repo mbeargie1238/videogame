@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -12,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
@@ -86,12 +89,14 @@ public class GameView extends SurfaceView implements Runnable{
 
     Bitmap game_over;
     Bitmap play_again;
+    Bitmap food_bowl;
+    Bitmap food_bowl_x;
 
     int bitmapXPosition;
     int bitmapYPosition;
     final Handler handler = new Handler();
     int yum_timer = 0;
-
+    Typeface tf;
 
 
     public GameView(Context context, int screenX, int screenY) {
@@ -122,6 +127,9 @@ public class GameView extends SurfaceView implements Runnable{
 
         surfaceHolder = getHolder();
         paint = new Paint();
+        AssetManager mngr = context.getAssets();
+        tf = Typeface.createFromAsset(mngr,"fonts/witless.ttf");
+        paint.setTypeface(tf);
 
         int starNums = 100;
         for (int i = 0; i < starNums; i++) {
@@ -145,6 +153,8 @@ public class GameView extends SurfaceView implements Runnable{
 
         game_over = BitmapFactory.decodeResource(context.getResources(), R.drawable.gameover);
         play_again = BitmapFactory.decodeResource(context.getResources(), R.drawable.playagain);
+        food_bowl = BitmapFactory.decodeResource(context.getResources(), R.drawable.bowl);
+        food_bowl_x = BitmapFactory.decodeResource(context.getResources(), R.drawable.bowlx);
 
 
         game_over = Bitmap.createScaledBitmap(game_over,
@@ -155,6 +165,16 @@ public class GameView extends SurfaceView implements Runnable{
         play_again = Bitmap.createScaledBitmap(play_again,
                 play_again.getWidth() / 3,
                 play_again.getHeight() / 3,
+                false);
+
+        food_bowl = Bitmap.createScaledBitmap(food_bowl,
+                food_bowl.getWidth() / 2,
+                food_bowl.getHeight() / 2,
+                false);
+
+        food_bowl_x = Bitmap.createScaledBitmap(food_bowl_x,
+                food_bowl_x.getWidth() / 2,
+                food_bowl_x.getHeight() / 2,
                 false);
 
     }
@@ -217,22 +237,6 @@ public class GameView extends SurfaceView implements Runnable{
             if (timeThisFrame >= 1) {
                 fps = 1000 / timeThisFrame;
             }
-
-
-            if(yum_timer == 1){
-
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Do something after 5s = 5000ms
-                        enemies.setX(-500);
-                    }
-                }, 150);
-
-                yum_timer = 0;
-
-            }
-
         }
     }
 
@@ -297,12 +301,12 @@ public class GameView extends SurfaceView implements Runnable{
 
         //if collision occurs with player
         if (Rect.intersects(player.getDetectCollision(), enemies.getDetectCollision())) {
-
-            yum_timer = 1;
             //displaying boom at that location
             yum.setX(enemies.getX());
             yum.setY(enemies.getY());
             //will play a sound at the collision between player and the enemy
+            enemies.setX(-500);
+
         } else {
             //if the enemy has just entered
             if (flag) {
@@ -446,10 +450,84 @@ public class GameView extends SurfaceView implements Runnable{
                     paint
             );
 
-            //drawing the score on the game screen
-            paint.setColor(Color.BLACK);
-            paint.setTextSize(50);
-            canvas.drawText("Score:"+score,100,50,paint);
+
+
+            paint.setColor(Color.rgb(11,102,242));
+            paint.setTextSize(75);
+            canvas.drawText("Score:"+score,100,100,paint);
+
+            if(countMisses == 0) {
+
+                canvas.drawBitmap(
+                        food_bowl,
+                        canvas.getWidth() - 600,
+                        50,
+                        paint
+                );
+
+                canvas.drawBitmap(
+                        food_bowl,
+                        canvas.getWidth() - 400,
+                        50,
+                        paint
+                );
+
+                canvas.drawBitmap(
+                        food_bowl,
+                        canvas.getWidth() - 200,
+                        50,
+                        paint
+                );
+
+            } else if (countMisses == 1) {
+
+                canvas.drawBitmap(
+                        food_bowl_x,
+                        canvas.getWidth() - 600,
+                        50,
+                        paint
+                );
+
+                canvas.drawBitmap(
+                        food_bowl,
+                        canvas.getWidth() - 400,
+                        50,
+                        paint
+                );
+
+                canvas.drawBitmap(
+                        food_bowl,
+                        canvas.getWidth() - 200,
+                        50,
+                        paint
+                );
+
+
+            } else if (countMisses == 2) {
+
+                canvas.drawBitmap(
+                        food_bowl_x,
+                        canvas.getWidth() - 600,
+                        50,
+                        paint
+                );
+
+                canvas.drawBitmap(
+                        food_bowl_x,
+                        canvas.getWidth() - 400,
+                        50,
+                        paint
+                );
+
+                canvas.drawBitmap(
+                        food_bowl,
+                        canvas.getWidth() - 200,
+                        50,
+                        paint
+                );
+
+
+            }
 
             //draw game Over when the game is over
             if(isGameOver){
@@ -458,7 +536,6 @@ public class GameView extends SurfaceView implements Runnable{
                 bitmapYPosition = (canvas.getHeight()/2) - (play_again.getHeight() / 2) + (game_over.getHeight() / 2) + 50;
 
 
-                //drawing boom image
                 canvas.drawBitmap(
                         game_over,
                         (canvas.getWidth()/2) - (game_over.getWidth() / 2),
